@@ -41,7 +41,7 @@ gauth = GoogleAuth()
 drive = GoogleDrive(gauth)
 # http = drive.auth.Get_Http_Object()
 gauth.LoadCredentialsFile(
-    path.join(path.dirname("/usr/src/app"), str(OWNER_ID)))
+    path.join(path.dirname(path.abspath(__file__)), OWNER_ID))
 
 if gauth.credentials is None:
     print("not Auth Users")
@@ -49,7 +49,7 @@ elif gauth.access_token_expired:
     # Refresh them if expired
     gauth.Refresh()
     gauth.SaveCredentialsFile(
-        path.join(path.dirname("/usr/src/app"), str(OWNER_ID)))
+        path.join(path.dirname(path.abspath(__file__)), OWNER_ID))
 else:
     # Initialize the saved creds
     #gauth.Authorize()
