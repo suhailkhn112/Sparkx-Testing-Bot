@@ -41,7 +41,7 @@ gauth = GoogleAuth()
 drive = GoogleDrive(gauth)
 # http = drive.auth.Get_Http_Object()
 gauth.LoadCredentialsFile(
-    path.join(path.dirname("/usr/src/app"), str(OWNER_ID)))
+    path.join(path.dirname(path.abspath(__file__)), str(OWNER_ID)))
 
 if gauth.credentials is None:
     print("not Auth Users")
