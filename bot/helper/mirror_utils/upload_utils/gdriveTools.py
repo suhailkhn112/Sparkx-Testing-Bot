@@ -26,12 +26,34 @@ from bot import parent_id, IMAGE_URL, DOWNLOAD_DIR, IS_TEAM_DRIVE, INDEX_URL, \
     USE_SERVICE_ACCOUNTS, telegraph_token, BUTTON_FOUR_NAME, BUTTON_FOUR_URL, BUTTON_FIVE_NAME, BUTTON_FIVE_URL, BUTTON_SIX_NAME, BUTTON_SIX_URL, SHORTENER, SHORTENER_API, VIEW_LINK
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, setInterval
 from bot.helper.ext_utils.fs_utils import get_mime_type, get_path_size
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
 LOGGER = logging.getLogger(__name__)
 logging.getLogger('googleapiclient.discovery').setLevel(logging.ERROR)
 if USE_SERVICE_ACCOUNTS:
     SERVICE_ACCOUNT_INDEX = randrange(len(os.listdir("accounts")))
 TELEGRAPHLIMIT = 80
+
+
+gauth = GoogleAuth()
+drive = GoogleDrive(gauth)
+# http = drive.auth.Get_Http_Object()
+gauth.LoadCredentialsFile(
+    path.join(path.dirname("/usr/src/app"), str(OWNER_ID)))
+
+if gauth.credentials is None:
+    print("not Auth Users")
+elif gauth.access_token_expired:
+    # Refresh them if expired
+    gauth.Refresh()
+    gauth.SaveCredentialsFile(
+        path.join(path.dirname(path.abspath(__file__)), str(OWNER_ID)))
+else:
+    # Initialize the saved creds
+    #gauth.Authorize()
+    drive = GoogleDrive(gauth)
+    http = drive.auth.Get_Http_Object()
 
 class GoogleDriveHelper:
     def __init__(self, name=None, listener=None):
@@ -44,7 +66,7 @@ class GoogleDriveHelper:
         self.__G_DRIVE_BASE_DOWNLOAD_URL = "https://drive.google.com/uc?id={}&export=download"
         self.__G_DRIVE_DIR_BASE_DOWNLOAD_URL = "https://drive.google.com/drive/folders/{}"
         self.__listener = listener
-        self.__service = self.authorize()
+        self.__service = gauth.Authorize()
         self._file_uploaded_bytes = 0
         self._file_downloaded_bytes = 0
         self.uploaded_bytes = 0
