@@ -30,3 +30,4 @@ TgCrypto
 torrentool
 urllib3
 yt-dlp
+PyDrive
